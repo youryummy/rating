@@ -3,8 +3,14 @@ var router = express.Router();
 
 var ratings = [
   {"idRating": "0a", "idRecipe": "gd2", "idUser": "fad12", "like": true, "comment": "i love it"},
-  {"idRating": "123a", "idRecipe": "413", "idUser": "faddf12", "like": false, "comment": "i lfsdove it"},
+  {"idRating": "123a", "idRecipe": "413", "idUser": "fad12", "like": false, "comment": "i lfsdove it"},
+  {"idRating": "0dda", "idRecipe": "gadfasd2", "idUser": "fad12", "like": true, "comment": "i love it"},
+  {"idRating": "0a231", "idRecipe": "gadfasd2", "idUser": "daw23", "like": true, "comment": "i love it"},
+]
 
+var accounts = [
+  {"idUser": "fad12", "username": "deyan", "name": "Deyan", "profilePicture": "foto1"},
+  {"idUser": "daw23", "username": "aniita", "name": "Ana", "profilePicture": "foto2"},
 ]
 
 /* GET ratings listing. */
@@ -12,18 +18,40 @@ router.get('/', function(req, res, next) {
   res.send(ratings);
 });
 
-/* GET ratings/userId listing. */
-router.get('/:idUser', function(req, res, next) {
+/* GET ratings/ratingsByUser/idUser listing. */
+router.get('/ratingsByUser/:idUser', function(req, res, next) {
   var idUser = req.params.idUser;
-  /*Para prueba con accounts
-    var result = recipesBooks.filter(recipeBook => accounts.find(a => a.username === username).recipesBooks.includes(recipeBook.id));
-  */
+  var userRatings = ratings.filter(r => r.idUser === idUser && r.like);
+  
+  var result = [];
+  userRatings.forEach(r => result.push(r.idRecipe));
 
-  var result = ratings.filter(r => r.idUser === idUser);
   if(result){
     res.send(result);
   } else {
-    res.sendStatus(404);
+    res.sendStatus(401);
+  }
+});
+
+/* GET ratings/idRecipe listing. */
+router.get('/:idRecipe', function(req, res, next) {
+  var idRecipe = req.params.idRecipe;
+  var ratingsForRecipe = ratings.filter(r => r.idRecipe === idRecipe);
+
+  ratingsForRecipe.forEach(function (r, index) {
+    //AQUI DEBERIA ESTAR LA FUNCION AWAIT QUE LLAMA A ACCOUNTS
+    accountInfo = accounts.find(a => {
+      return a.idUser === r.idUser;
+    })
+    
+    Object.assign(ratingsForRecipe[index], accountInfo);
+
+  });
+  
+  if(ratingsForRecipe){
+    res.send(ratingsForRecipe);
+  } else {
+    res.sendStatus(401);
   }
 });
 
