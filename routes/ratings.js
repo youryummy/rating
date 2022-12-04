@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var perspectiveService = require('../services/perspectiveService');
 
 var ratings = [
   {"idRating": "0a", "idRecipe": "gd2", "idUser": "fad12", "like": true, "comment": "i love it"},
@@ -64,3 +65,13 @@ router.post('/', function(req, res, next) {
 
 
 module.exports = router;
+
+/* GET perspective test listing. */
+router.post('/perspective/', function(req, res, next) {
+  try {
+    const result = perspectiveService.validateRating();
+    res.send(result);
+  }catch(e){
+    res.sendStatus((500));
+  }
+}); 
