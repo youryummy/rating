@@ -3,19 +3,25 @@ const mongoose = require('mongoose');
 const ratingSchema = new mongoose.Schema({
     like: {
         type: Boolean,
-        required: true
+        required: [true, "Like is required"],
     },
     comment: {
         type: String,
-        required: true
+        required: [true, "Comment is required"],
+        minLength: 1,
+        maxLength: 150,
     },
     idRecipe: {
         type: String,
-        required: true
+        required: [true, "Id of Recipe is required"],
+        minLength: 1,
+        maxLength: 6,
     },
     idUser: {
         type: String,
-        required: true
+        required: [true, "Id of User is required"],
+        minLength: 1,
+        maxLength: 6,
     },
 });
 
