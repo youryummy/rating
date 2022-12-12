@@ -1,8 +1,8 @@
 const axios = require('axios');
 const urlJoin = require('url-join');
-const debug = require('debug')('ratings-service:accounts');
+const debug = require('debug')('ratings-service:ratings');
 
-const ACCOUNTS_SERVICE = process.env.ACCOUNTS_SERVICE || 'http://localhost:3333';
+const RATINGS_SERVICE = process.env.RATINGS_SERVICE || 'http://localhost:3333';
 const API_VERSION = 'api/v1';
 
 const getUser = async function(idUser) {

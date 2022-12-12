@@ -98,7 +98,7 @@ module.exports = router;
 /* GET perspective test listing. */
 router.post('/perspective/', function(req, res, next) {
   try {
-    const result = perspectiveService.validateRating();
+    const result = perspectiveService.validateRating("Asquerosa");
     res.send(result);
   }catch(e){
     res.sendStatus((500));
