@@ -1,16 +1,18 @@
 {
-    "name": "ratings-service",
+    "name": "rating-service",
     "version": "1.0.0",
-    "description": "Generated with OAS TOOLS CLI",
+    "description": "API of Rating microservice",
     "license": "UNLICENSED",
     "type": "module",
     "private": true,
     "main": "index.js",
     "scripts": {
-        "prestart": "npm install --only=prod",
-        "start": "node index.js"    },
+      "prestart": "npm install --only=prod",
+      "start": "node index.js"
+    },
     "dependencies": {
-        "express": "^4.18.0",
-        "@oas-tools/core": "^3.0.0"
+      "@oas-tools/core": "^3.0.0",
+      "express": "^4.18.2",
+      "mongoose": "^6.8.0"
     }
-}
+  }
