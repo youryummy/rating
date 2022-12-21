@@ -8,7 +8,8 @@ paths:
   /api/v1/ratings:
     get:
       description: Returns all ratings
-      operationId: getRating
+      x-router-controller: ratingManager
+      operationId: getAllRatings
       responses:
         200:
           description: Rating list
@@ -26,6 +27,7 @@ paths:
                 $ref: '#/components/schemas/error'
     post:
       description: Creates a new rating
+      x-router-controller: ratingManager
       operationId: addRating
       requestBody:
         content:
@@ -43,20 +45,21 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/error'
-  /api/v1/ratings/{idRating}:
+  /api/v1/ratings/{idRecipe}:
     get:
-      description: Returns a single rating by its idRating
-      operationId: findByidRating
+      description: Returns a single rating by its idRecipe
+      x-router-controller: ratingManager
+      operationId: getRatings
       parameters:
         - required: true
-          name: idRating
-          description: idRating of the rating to fetch
+          name: idRecipe
+          description: idRecipe of the rating to fetch
           in: path
           schema:
             type: string
       responses:
         200:
-          description: Rating found by idRating
+          description: Rating found by idRecipe
           content:
             application/json:
               schema:
@@ -69,6 +72,7 @@ paths:
                 $ref: '#/components/schemas/error'
     put:
       description: Update a rating based on its idRating
+      x-router-controller: ratingManager
       operationId: updateRating
       parameters:
         - required: true
@@ -95,6 +99,7 @@ paths:
                 $ref: '#/components/schemas/error'
     delete:
       description: Deletes a single rating based on its idRating
+      x-router-controller: ratingManager
       operationId: deleteRating
       parameters:
         - required: true
