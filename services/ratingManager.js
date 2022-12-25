@@ -1,13 +1,17 @@
 import Rating from "../mongo/rating.js";
-import {Types} from 'mongoose';
-import {logger} from "@oas-tools/commons";
-import _ from 'lodash';
+import { Types } from "mongoose";
+import { logger } from "@oas-tools/commons";
+import _ from "lodash";
+import * as perspective from '../services/perspective.js';
 
-export function getRatings(_req, res) {
-    const idRecipe = _req.params.idRecipe;
-    Rating.find({idRecipe: idRecipe}).then((ratingsForRecipe) => {     
-        
-        /*
+
+export async function getRatings(_req, res) {
+  const idRecipe = _req.params.idRecipe;
+
+  try {
+    var ratingsForRecipe = await Rating.find({ idRecipe: idRecipe });
+
+    /*
         ratingsForRecipe.forEach(function (r, index) {
         //AQUI DEBERIA ESTAR LA FUNCION AWAIT QUE LLAMA A ACCOUNTS
         accountInfo = accounts.find(a => {
@@ -18,122 +22,105 @@ export function getRatings(_req, res) {
     
         });
         */
-        res.send(ratingsForRecipe);
-    }).catch((err) => {
-        logger.error(`Error while getting ratings for recipe: ${err.message}`);
-        res.status(500).send({ message: "Unexpected error ocurred, please try again later" });
-    });
+
+    res.send(ratingsForRecipe);
+  } catch (e) {
+    res.status(400).send({ error: e.message });
+  }
 }
 
-export function getRatingsByUser(_req, res) {
-    const idUser = _req.params.idUser;
-    console.log("iduser: " + idUser);
-    Rating.find({idUser: idUser, like: true}).then((ratingsByUser) => {     
-        /*Falta hacer que solo se mande el string, se pasa mal, preguntar alex
-        
-        
-        /Para cada rating añadimos el idRecipe al array result
-        var result = [];
-        ratingsByUser.forEach(r => result.push(r.idRecipe));
-        console.log("Result: " + result);
-        res.send(result);*/
+//No consigo que funcione
+export async function getRatingsByUser(req, res) {
+  const idUser = req.params.idUser;
+  console.log("iduser: " + idUser);
 
-        res.send(ratingsByUser);
-    }).catch((err) => {
-        logger.error(`Error while getting ratings for user: ${err.message}`);
-        res.status(500).send({ message: "Unexpected error ocurred, please try again later" });
-    });
+  try {
+    //const ratings = await Rating.find({idUser: idUser, like: true });
+    //console.log(ratings);
+    res.send("test");
+  } catch (e) {
+    if (e.errors) {
+      res.status(400).send({ error: e.message });
+    } else {
+      res.sendStatus(501);
+    }
+  }
 }
 
-/*
-//Este metodo no se necesita pero si la quito da fallo
- export function findByidRating(req, res) {
-    res.send({
-        message: 'This is the mockup controller for updateRating'
-    });
-}*/
+export async function updateRating(req, res) {
+  //pendiente añadir comprobacion con perspective api
 
-export function updateRating(req, res) {
-    res.send({
-        message: 'This is the mockup controller for updateRating'
+  try {
+    var existingRating = await Rating.findOne({
+      _id: req.params.idRating,
     });
+
+    if (existingRating != null) {
+      existingRating.comment = req.body.comment;
+      existingRating.like = req.body.like;
+      await existingRating.save();
+    } else {
+      res.sendStatus(404);
+    }
+    return res.sendStatus(201);
+  } catch (e) {
+    res.status(400).send({ error: e.message });
+  }
 }
 
 export async function deleteRating(req, res) {
-    const idRating = req.params.idRating;
-    console.log("idrating: " + idRating);
+  const idRating = req.params.idRating;
 
-    const rating = await Rating.find({_id: idRating});
-  
-       
-      try{
-          await Rating.deleteOne(rating);
-          return res.sendStatus(200);
-        } catch(e) {
-          if(e.errors){
-        
-            res.status(400).send({error: e.message});
-          }else{
-        
-            res.sendStatus(501);
-          }
-         
-        }
+  try {
+    await Rating.deleteOne({ _id: idRating });
+    res.sendStatus(200);
+  } catch (e) {
+    res.status(400).send({ error: e.message });
+  }
 }
 
-export function getAllRatings(req, res) {
-    Rating.find({}).then((results) => {     
-        console.log(results); 
-        res.send(results.map(r => 
-            _.set(
-                _.pick(r, ['like','comment', 'idUser', 'idRecipe', '_id'])
-            )
-        ));
-  }).catch((err) => {
-      logger.error(`Error while getting all ratings: ${err.message}`);
-      res.status(500).send({ message: "Unexpected error ocurred, please try again later" });
-  });
+export async function getAllRatings(req, res) {
+  try {
+    var ratingsForRecipe = await Rating.find({});
+    res.send(ratingsForRecipe);
+  } catch (e) {
+    res.status(400).send({ error: e.message });
   }
-  
-  export async function addRating(req, res)  {
+}
 
-    const {like, comment, idRecipe, idUser} = req.body;
+export async function addRating(req, res) {
+  const { like, comment, idRecipe, idUser } = req.body;
 
-    //pendiente añadir comprobacion con perspective api
+  //pendiente añadir comprobacion con perspective api
+  const validationResult = await perspective.validateRating(comment);
+  console.log(validationResult);
 
+  try {
+    var existingRating = await Rating.findOne({
+      idUser: idUser,
+      idRecipe: idRecipe,
+    });
 
-    const rating = new Rating({
-      like, 
-      comment, 
-      idRecipe, 
-      idUser
-    }); 
+    if (existingRating != null) {
+      existingRating.comment = comment;
+      existingRating.like = like;
+      await existingRating.save();
+    } else {
+      const rating = new Rating({
+        like,
+        comment,
+        idRecipe,
+        idUser,
+      });
 
-    var existingRating = await Rating.findOne({idUser: req.body.idUser, idRecipe: req.body.idRecipe});
-    if(existingRating != null){
-        existingRating.comment = rating.comment;
-        existingRating.like = rating.like;
+      await rating.save();
     }
-  
-  
-    try{
-        if(existingRating != null){
-            console.log("entro:",existingRating);
-            existingRating.save();
-        }else{
-            await rating.save();
-        }
-      return res.sendStatus(201);
-    } catch(e) {
-      if(e.errors){
-    
-        res.status(400).send({error: e.message});
-      }else{
-    
-        res.sendStatus(501);
-      }
-     
+    return res.sendStatus(201);
+  } catch (e) {
+    if (e.errors) {
+      res.status(400).send({ error: e.message });
+    } else {
+      res.sendStatus(501);
     }
   }
-  
-  
+}
