@@ -28,6 +28,7 @@ const deploy = async (env) => {
         }
     }
 
+    app.use(express.json());
     // Initialize OAS Tools
     use(OASSwagger, {path: "/docs"});
     initialize(app).then(() => {

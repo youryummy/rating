@@ -5,6 +5,7 @@ const ratingSchema = new Schema({
     idRecipe: String,
     like: Boolean,
     comment: String,
+    idRating: String
   });
 
 export default model('Rating', ratingSchema, 'ratings');

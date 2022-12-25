@@ -45,7 +45,7 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/error'
-  /api/v1/ratings/{idRecipe}:
+  /api/v1/ratings/{idRating}:
     get:
       description: Returns a single rating by its idRecipe
       x-router-controller: ratingManager
@@ -117,13 +117,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-
+  /api/v1/ratings/ratingsByUser/{idUser}:
+    get:
+      description: Returns recipes liked by user
+      x-router-controller: ratingManager
+      operationId: getRatingsByUser
+      parameters:
+        - required: true
+          name: idUser
+          description: idUser of the rating to fetch
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of recipes liked by user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rating'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
 components:
   schemas:
     rating:
         type: object
-        required:
-          - idRating
         properties:
           like:
             type: boolean
@@ -134,8 +158,6 @@ components:
           idRecipe:
             type: string
           idUser:
-            type: string
-          idRating:
             type: string
     error:
       type: object

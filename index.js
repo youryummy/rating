@@ -1,3 +1,4 @@
+import { application } from 'express';
 import mongoose from 'mongoose';
 import server from './server.js';
 
@@ -41,3 +42,4 @@ process.on('SIGTERM', function onSigterm () {
 const shutdown = () => {
   server.undeploy();
 };
+
