@@ -1,17 +1,17 @@
 build:
-  ratingsservice:
+  ratings-service:
     context: .
 
 deploy:
-  - helm upgrade --install ratingsservice k8s
+  - helm upgrade --install ratings-service k8s
     --set global.node_env=${NODE_ENV}
     --set global.jwt_secret=${JWT_SECRET}
     --set global.jwt_issuer=${JWT_ISSUER}
     --set global.namespaceOverride=${NAMESPACE}
-    --set ratingsservice.mongo_pwd=${MONGO_PWD}
-    --set ratingsservice.mongo_user=${MONGO_USER}
-    --set ratingsservice.mongo_host=${MONGO_HOST}
-    --set ratingsservice.mongo_port=${MONGO_PORT}
-    --set ratingsservice.mongo_proto=${MONGO_PROTO}
-    --set ratingsservice.mongo_dbname=${MONGO_DBNAME}
-    --set ratingsservice.image=${OKTETO_BUILD_RATINGS_SERVICE_IMAGE}
+    --set ratings-service.mongo_pwd=${MONGO_PWD}
+    --set ratings-service.mongo_user=${MONGO_USER}
+    --set ratings-service.mongo_host=${MONGO_HOST}
+    --set ratings-service.mongo_port=${MONGO_PORT}
+    --set ratings-service.mongo_proto=${MONGO_PROTO}
+    --set ratings-service.mongo_dbname=${MONGO_DBNAME}
+    --set ratings-service.image=${OKTETO_BUILD_RATINGS_SERVICE_IMAGE}

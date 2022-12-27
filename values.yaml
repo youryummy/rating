@@ -7,4 +7,4 @@ ratings-service:
   mongo_user: rservice
   mongo_pwd: wqgCgZtZJ7qu0O6m
   mongo_dbname: ratings
-  image: ratingsservice:latest
+  image: ratings-service:latest
