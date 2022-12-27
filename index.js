@@ -1,6 +1,6 @@
-import { application } from 'express';
 import mongoose from 'mongoose';
 import server from './server.js';
+import 'dotenv/config';
 
 // Node environment
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
@@ -8,8 +8,19 @@ const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
 // Mongo connection variables
 const mongoPort = process.env.MONGO_PORT ?? 27017;
 const mongoHost = process.env.MONGO_HOST ?? 'localhost';
-const mongoDBName = process.env.MONGO_DBNAME ?? 'ratings-db';
-const mongoURL = process.env.MONGO_URL ? process.env.MONGO_URL : `mongodb://${mongoHost}:${mongoPort}/${mongoDBName}`;
+const mongoDBName = process.env.MONGO_DBNAME ?? 'default-db';
+const mongoProto = process.env.MONGO_PROTO ?? 'mongodb';
+const mongoUser = process.env.MONGO_USER;
+const mongoPwd = process.env.MONGO_PWD;
+
+
+const mongoURL = `${mongoProto}://` +
+  `${mongoUser ? mongoUser + ":" : ""}` +
+  `${mongoPwd ? mongoPwd + "@" : ""}` +
+  `${mongoHost}${mongoProto == "mongodb+srv" ? "" : ":" + mongoPort}` +
+  `/${mongoDBName}`;
+
+  console.log("Mongo URL: " + mongoURL);
 
 const mongooseConnect = function () {
   const db = mongoose.connection;
@@ -42,4 +53,3 @@ process.on('SIGTERM', function onSigterm () {
 const shutdown = () => {
   server.undeploy();
 };
-

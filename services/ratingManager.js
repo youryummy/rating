@@ -81,7 +81,7 @@ export async function deleteRating(req, res) {
 
 export async function getAllRatings(req, res) {
   try {
-    var ratingsForRecipe = await Rating.find({});
+    const ratingsForRecipe = await Rating.find({});
     res.send(ratingsForRecipe);
   } catch (e) {
     res.status(400).send({ error: e.message });
@@ -92,8 +92,8 @@ export async function addRating(req, res) {
   const { like, comment, idRecipe, idUser } = req.body;
 
   //pendiente añadir comprobacion con perspective api
-  const validationResult = await perspective.validateRating(comment);
-  console.log(validationResult);
+  //const validationResult = await perspective.validateRating(comment);
+  //console.log(validationResult);
 
   try {
     var existingRating = await Rating.findOne({
