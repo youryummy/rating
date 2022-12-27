@@ -1,5 +1,5 @@
 apiVersion: v1
-name: ratings-service
+name: ratingsservice
 description: YourYummy ratings manager service
 type: application
 version: 1.0.0
