@@ -48,16 +48,22 @@ export async function getRatingsByUser(req, res) {
 }
 
 export async function updateRating(req, res) {
-  //pendiente añadir comprobacion con perspective api
+  var { like, comment} = req.body;
 
   try {
+    const validationResult = await perspective.validateRating(comment);
+    console.log("resultado validacion: ",validationResult);
+    if (validationResult > 0.5) {
+      comment = "This comment has been removed due to toxicity";
+    }
+
     var existingRating = await Rating.findOne({
       _id: req.params.idRating,
     });
 
     if (existingRating != null) {
-      existingRating.comment = req.body.comment;
-      existingRating.like = req.body.like;
+      existingRating.comment = comment;
+      existingRating.like = like;
       await existingRating.save();
     } else {
       res.sendStatus(404);
@@ -89,18 +95,20 @@ export async function getAllRatings(req, res) {
 }
 
 export async function addRating(req, res) {
-  const { like, comment, idRecipe, idUser } = req.body;
-
-  //pendiente añadir comprobacion con perspective api
-  //const validationResult = await perspective.validateRating(comment);
-  //console.log(validationResult);
+  var { like, comment, idRecipe, idUser } = req.body;
 
   try {
+    const validationResult = await perspective.validateRating(comment);
+    console.log("resultado validacion: ",validationResult);
+    if (validationResult > 0.5) {
+      comment = "This comment has been removed due to toxicity";
+    }
+
     var existingRating = await Rating.findOne({
       idUser: idUser,
       idRecipe: idRecipe,
     });
-
+    console.log("publicando");
     if (existingRating != null) {
       existingRating.comment = comment;
       existingRating.like = like;
