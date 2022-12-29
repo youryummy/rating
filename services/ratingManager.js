@@ -5,7 +5,7 @@ import _ from "lodash";
 import * as perspective from '../services/perspective.js';
 
 
-export async function getRatings(_req, res) {
+export async function findByRecipeId(_req, res) {
   const idRecipe = _req.params.idRecipe;
 
   try {

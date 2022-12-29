@@ -16,8 +16,8 @@ export function deleteRating(req, res) {
     service.deleteRating(req, res);
 }
 
-export function getRatings(req, res) {
-    service.getRatings(req, res);
+export function findByRecipeId(req, res) {
+    service.findByRecipeId(req, res);
 }
 
 export function findByUserId(req, res) {

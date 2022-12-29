@@ -97,7 +97,7 @@ paths:
     get:
       description: Returns a single rating by its idRecipe
       x-router-controller: ratingManager
-      operationId: getRatings
+      operationId: findByRecipeId
       parameters:
         - required: true
           name: idRecipe
