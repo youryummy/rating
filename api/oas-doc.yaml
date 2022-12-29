@@ -122,7 +122,7 @@ paths:
     get:
       description: Returns recipes liked by user
       x-router-controller: ratingManager
-      operationId: getRatingsByUser
+      operationId: findByUserId
       parameters:
         - required: true
           name: idUser
@@ -136,7 +136,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  type: string
         default:
           description: Unexpected error
           content:

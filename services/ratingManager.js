@@ -30,14 +30,18 @@ export async function getRatings(_req, res) {
 }
 
 //No consigo que funcione
-export async function getRatingsByUser(req, res) {
+export async function findByUserId(req, res) {
   const idUser = req.params.idUser;
-  console.log("iduser: " + idUser);
 
   try {
-    //const ratings = await Rating.find({idUser: idUser, like: true });
-    //console.log(ratings);
-    res.send("test");
+    const ratings = await Rating.find({idUser: idUser, like: true });
+    var results = [];
+
+    ratings.forEach(function (r, index) {
+      results.push(r.idRecipe);
+    });
+
+    res.send(results);
   } catch (e) {
     if (e.errors) {
       res.status(400).send({ error: e.message });
@@ -52,7 +56,6 @@ export async function updateRating(req, res) {
 
   try {
     const validationResult = await perspective.validateRating(comment);
-    console.log("resultado validacion: ",validationResult);
     if (validationResult > 0.5) {
       comment = "This comment has been removed due to toxicity";
     }
@@ -99,7 +102,6 @@ export async function addRating(req, res) {
 
   try {
     const validationResult = await perspective.validateRating(comment);
-    console.log("resultado validacion: ",validationResult);
     if (validationResult > 0.5) {
       comment = "This comment has been removed due to toxicity";
     }
@@ -108,7 +110,6 @@ export async function addRating(req, res) {
       idUser: idUser,
       idRecipe: idRecipe,
     });
-    console.log("publicando");
     if (existingRating != null) {
       existingRating.comment = comment;
       existingRating.like = like;

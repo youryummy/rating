@@ -20,6 +20,6 @@ export function getRatings(req, res) {
     service.getRatings(req, res);
 }
 
-export function getRatingsByUser(req, res) {
-    service.getRatings(req, res);
+export function findByUserId(req, res) {
+    service.findByUserId(req, res);
 }
