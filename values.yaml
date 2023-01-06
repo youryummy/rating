@@ -1,0 +1,10 @@
+global:
+  node_env: development
+
+ratings-service:
+  mongo_proto: mongodb+srv
+  mongo_host: ratings-service.olmvwaw.mongodb.net
+  mongo_user: rservice
+  mongo_pwd: wqgCgZtZJ7qu0O6m
+  mongo_dbname: ratings
+  image: ratings-service:latest

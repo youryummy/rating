@@ -1,14 +1,26 @@
 {
-  "name": "ratings-service",
-  "version": "0.0.0",
+  "name": "rating-service",
+  "version": "1.0.0",
+  "description": "API of Rating microservice",
+  "license": "UNLICENSED",
+  "type": "module",
   "private": true,
+  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "prestart": "npm install --only=prod",
+    "start": "node index.js",
+    "test": "jest"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "morgan": "~1.9.1"
+    "@oas-tools/core": "^3.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "googleapis": "^110.0.0",
+    "mongoose": "^6.8.0"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "jest-extended": "^3.2.2",
+    "supertest": "^6.3.3"
   }
 }

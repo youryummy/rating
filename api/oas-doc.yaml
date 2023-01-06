@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Ratings Service
+  description: Generated with OAS TOOLS CLI 
+
+paths:
+  /api/v1/ratings:
+    get:
+      description: Returns all ratings
+      x-router-controller: ratingManager
+      operationId: getAllRatings
+      responses:
+        200:
+          description: Rating list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rating'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      description: Creates a new rating
+      x-router-controller: ratingManager
+      operationId: addRating
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rating'
+        description: Rating to be created
+        required: true
+      responses:
+        201:
+          description: Rating
+        default:
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/error'
+  /api/v1/ratings/{idRating}:
+    put:
+      description: Update a rating based on its idRating
+      x-router-controller: ratingManager
+      operationId: updateRating
+      parameters:
+        - required: true
+          name: idRating
+          description: idRating of the rating to update
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rating'
+        description: Rating to be updated
+        required: true
+      responses:
+        '204':
+          description: Rating updated
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    delete:
+      description: Deletes a single rating based on its idRating
+      x-router-controller: ratingManager
+      operationId: deleteRating
+      parameters:
+        - required: true
+          name: idRating
+          description: idRating of the rating to delete
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Rating deleted
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /api/v1/ratings/findByRecipeId/{idRecipe}:
+    get:
+      description: Returns a single rating by its idRecipe
+      x-router-controller: ratingManager
+      operationId: findByRecipeId
+      parameters:
+        - required: true
+          name: idRecipe
+          description: idRecipe of the rating to fetch
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Rating found by idRecipe
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rating'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /api/v1/ratings/findByUserId/{idUser}:
+    get:
+      description: Returns recipes liked by user
+      x-router-controller: ratingManager
+      operationId: findByUserId
+      parameters:
+        - required: true
+          name: idUser
+          description: idUser of the ratings to fetch
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: Ratings found by idUser
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+components:
+  schemas:
+    rating:
+        type: object
+        properties:
+          like:
+            type: boolean
+          comment:
+            type: string
+          idRecipe:
+            type: string
+          idUser:
+            type: string
+    error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+      additionalProperties: true
