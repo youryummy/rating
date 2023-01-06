@@ -6,6 +6,6 @@ const ratingSchema = new Schema({
     like: Boolean,
     comment: String,
     idRating: String
-  });
+  }, { versionKey: false });
 
 export default model('Rating', ratingSchema, 'ratings');

@@ -71,7 +71,7 @@ export async function updateRating(req, res) {
     } else {
       res.sendStatus(404);
     }
-    return res.sendStatus(201);
+    return res.sendStatus(204);
   } catch (e) {
     res.status(400).send({ error: e.message });
   }
@@ -82,7 +82,7 @@ export async function deleteRating(req, res) {
 
   try {
     await Rating.deleteOne({ _id: idRating });
-    res.sendStatus(200);
+    res.sendStatus(204);
   } catch (e) {
     res.status(400).send({ error: e.message });
   }
@@ -90,8 +90,8 @@ export async function deleteRating(req, res) {
 
 export async function getAllRatings(req, res) {
   try {
-    const ratingsForRecipe = await Rating.find({});
-    res.send(ratingsForRecipe);
+    const ratings = await Rating.find({});
+    res.send(ratings);
   } catch (e) {
     res.status(400).send({ error: e.message });
   }

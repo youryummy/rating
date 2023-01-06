@@ -111,7 +111,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/rating'
+                type: array
+                items:
+                  $ref: '#/components/schemas/rating'
         default:
           description: Unexpected error
           content:
@@ -153,8 +155,6 @@ components:
           like:
             type: boolean
           comment:
-            type: string
-          timestamp:
             type: string
           idRecipe:
             type: string
