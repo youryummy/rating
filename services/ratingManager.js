@@ -82,6 +82,13 @@ export async function addRating(req, res) {
   const newRating = req.body;
 
       try {
+
+        const validationResult = await perspective.validateRating(newRating.comment);
+
+        if (validationResult > 0.5) {
+          newRating.comment = "This comment has been removed due to toxicity";
+        }
+
         CircuitBreaker.getBreaker(Rating).fire("create", newRating);
         return res.sendStatus(newRating);
         
