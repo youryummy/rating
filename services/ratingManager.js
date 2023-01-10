@@ -78,7 +78,7 @@ export async function deleteRating(req, res) {
   const rating = req.params.idRating;
 
     try {
-      CircuitBreaker.getBreaker(Rating).fire("delete", {idRating: rating});
+      CircuitBreaker.getBreaker(Rating).fire("findByIdAndDelete", {idRating: rating});
       return res.sendStatus(201);
 
       } catch (err) {
@@ -109,7 +109,7 @@ export async function addRating(req, res) {
         }
 
         CircuitBreaker.getBreaker(Rating).fire("create", newRating);
-        return res.sendStatus(newRating);
+        return res.send(newRating);
         
       } catch (err) {
         res.status(400).send({ error: err.message });
