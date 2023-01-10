@@ -6,6 +6,7 @@ chai.should();
 
 let recipeId;
 let ratingId;
+let userId;
 let ratingPOST = { idUser: "test_POST", idRecipe: "test_POST", like: "test_POST", comment: "test_POST"}
 
 const apiURL = "http://localhost:8080"
@@ -34,6 +35,7 @@ describe('post Ratings', () => {
 
             ratingId = res.body.idRating
             recipeId = res.body.idRecipe;
+            userId = res.body.idUser;
         })
     })
 })
@@ -41,7 +43,21 @@ describe('post Ratings', () => {
 describe('get ratings by Id recipe', () => {
     it('should get ratings by id recipe', () => {
         chai.request(apiURL)
-        .get('/api/v1/recipesbooks/' + recipesId)
+        .get('/api/v1/ratings/' + recipeId)
+        .end((err, res) => {
+            res.body.should.be.a('object');
+            res.body.should.have.property('idUser').eql(ratingPOST.idUser);
+            res.body.should.have.property('idRecipe').eql(ratingPOST.idRecipe);
+            res.body.should.have.property('like').eql(ratingPOST.like);
+            res.body.should.have.property('comment').eql(ratingPOST.comment);
+        })
+    })
+})
+
+describe('get ratings by Id user', () => {
+    it('should get ratings by id user', () => {
+        chai.request(apiURL)
+        .get('/api/v1/ratings/' + userId)
         .end((err, res) => {
             res.body.should.be.a('object');
             res.body.should.have.property('idUser').eql(ratingPOST.idUser);

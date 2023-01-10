@@ -24,6 +24,25 @@ export async function findByRecipeId(req, res) {
   })
 }
 
+export async function findByUserId(req, res) {
+
+  const user = req.params.idUser;
+  
+  CircuitBreaker.getBreaker(Rating).fire("find", {idUser: user}).then(result => {
+    
+    if(result) {
+      res.send(result);
+
+    } else {
+      res.sendStatus(404);
+    }
+    
+  }).catch((err) => {
+    res.sendStatus(500).send({ error: err.message });
+  })
+
+}
+
 export async function updateRating(req, res) {
   const valueLike = req.body.like;
   const valueComment = req.body.comment;
