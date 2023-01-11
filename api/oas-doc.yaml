@@ -80,6 +80,7 @@ paths:
       parameters:
         - required: true
           name: idRating
+          x-acl-binding: ratingIds
           description: idRating of the rating to delete
           in: path
           schema:
@@ -168,3 +169,9 @@ components:
         message:
           type: string
       additionalProperties: true
+  securitySchemes:
+  apikey:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    x-acl-config: { $ref: ./acl-config.yaml }
