@@ -1,5 +1,5 @@
 user:
-  api/v1/ratings/{id}:
+  api/v1/ratings/{idRating}:
     "read:any": ["*"]
     "update:own": ["*"]
     "delete:own": ["*"]

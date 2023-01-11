@@ -37,8 +37,12 @@ paths:
         description: Rating to be created
         required: true
       responses:
-        201:
+        200:
           description: Rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rating'
         default:
             description: Unexpected error
             content:
@@ -170,8 +174,8 @@ components:
           type: string
       additionalProperties: true
   securitySchemes:
-  apikey:
-    type: http
-    scheme: bearer
-    bearerFormat: JWT
-    x-acl-config: { $ref: ./acl-config.yaml }
+    apikey:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-acl-config: { $ref: ./acl-config.yaml }
