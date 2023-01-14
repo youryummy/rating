@@ -6,7 +6,8 @@ import * as perspective from "../services/perspective.js";
 import { CircuitBreaker } from "../circuitBreaker/circuitBreaker.js";
 import axios from "axios";
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+const backendUrl =
+  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://youryummy-account-service:80";
 
 export async function findByRecipeId(req, res) {
   const recipe = req.params.idRecipe;
@@ -15,15 +16,26 @@ export async function findByRecipeId(req, res) {
     .fire("find", { idRecipe: recipe })
     .then((result) => {
       if (result) {
-        result.forEach(function (r, index) {
-          axios.get(`${backendUrl}/api/v1/accounts/${r.idUser}`).then((response) => {
-            console.log("obtenido de account: ",response.data);
-            result[index].fullName = response.data.fullName;
-            result[index].avatar = response.data.avatar;
-          });
+        var newResult = JSON.parse(JSON.stringify(result));
+
+        var p = newResult.map((r) => {
+          return axios
+            .get(`${backendUrl}/api/v1/accounts/${r.idUser}`, {
+              withCredentials: true,
+            })
+            .then((userData) => {
+              Object.assign(r, userData.data);
+              console.log("r: ", r);
+              console.log("userData.data: ", userData.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         });
-        
-        res.send(result);
+
+        Promise.all(p).then(() => {
+          res.send(newResult);
+        });
       } else {
         res.sendStatus(404);
       }
@@ -69,23 +81,27 @@ export async function updateRating(req, res) {
       valueComment = "This comment has been removed due to toxicity";
     }
 
-      CircuitBreaker.getBreaker(Rating)
-        .fire(
-          "findByIdAndUpdate",
-          { _id: idRating },
-          { like: valueLike, comment: valueComment, idUser: idUser, idRecipe: idRecipe }
-        )
-        .then((result) => {
-          if (result) {
-            res.sendStatus(204);
-          } else {
-            res.sendStatus(404);
-          }
-        })
-        .catch((err) => {
-          res.status(500).send({ errror: err.message });
-        });
-    
+    CircuitBreaker.getBreaker(Rating)
+      .fire(
+        "findByIdAndUpdate",
+        { _id: idRating },
+        {
+          like: valueLike,
+          comment: valueComment,
+          idUser: idUser,
+          idRecipe: idRecipe,
+        }
+      )
+      .then((result) => {
+        if (result) {
+          res.sendStatus(204);
+        } else {
+          res.sendStatus(404);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({ errror: err.message });
+      });
   } catch (err) {
     res.status(400).send({ error: err.message });
   }
