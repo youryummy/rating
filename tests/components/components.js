@@ -7,7 +7,7 @@ chai.should();
 let recipeId;
 let ratingId;
 let userId;
-let ratingPOST = { idUser: "test_POST", idRecipe: "test_POST", like: "test_POST", comment: "test_POST" }
+let ratingPOST = { idUser: "test_POST", idRecipe: "test_POST", like: true, comment: "test_POST" }
 
 const apiURL = "http://localhost:8080"
 
@@ -16,6 +16,7 @@ describe('get Ratings', () => {
         chai.request(apiURL)
         .get('/api/v1/ratings')
         .end((err, res) => {
+            console.log(res)
             res.body.should.be.a('object');
         })
     })
