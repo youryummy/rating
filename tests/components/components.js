@@ -4,10 +4,10 @@ import chaiHttp from 'chai-http';
 chai.use(chaiHttp);
 chai.should();
 
-let recipeId;
-let ratingId;
-let userId;
-let ratingPOST = { idUser: "test_POST", idRecipe: "test_POST", like: true, comment: "test_POST" }
+var recipeId = "test_idRecipe";
+var ratingId = "test_idRating";
+var userId = "test_idUser";
+let ratingPOST = { idUser: "test_idUser", idRecipe: "test_idRecipe", like: true, comment: "test_comment" }
 
 const apiURL = "http://localhost:8080"
 
@@ -16,8 +16,7 @@ describe('get Ratings', () => {
         chai.request(apiURL)
         .get('/api/v1/ratings')
         .end((err, res) => {
-            console.log(res)
-            res.body.should.be.a('object');
+            res.body.should.be.a('array');
         })
     })
 })
@@ -33,10 +32,7 @@ describe('post Ratings', () => {
             res.body.should.have.property('idRecipe');
             res.body.should.have.property('like');
             res.body.should.have.property('comment');
-
-            ratingId = res.body.idRating
-            recipeId = res.body.idRecipe;
-            userId = res.body.idUser;
+            res.body.should.have.property('_id');
         })
     })
 })
@@ -44,13 +40,16 @@ describe('post Ratings', () => {
 describe('get ratings by Id recipe', () => {
     it('should get ratings by id recipe', () => {
         chai.request(apiURL)
-        .get('/api/v1/ratings/' + recipeId)
+        .get('/api/v1/ratings/'+recipeId)
         .end((err, res) => {
-            res.body.should.be.a('object');
-            res.body.should.have.property('idUser').eql(ratingPOST.idUser);
-            res.body.should.have.property('idRecipe').eql(ratingPOST.idRecipe);
-            res.body.should.have.property('like').eql(ratingPOST.like);
-            res.body.should.have.property('comment').eql(ratingPOST.comment);
+            res.body.should.be.a('array');
+            res.body.forEach(rating => {
+                rating.should.have.property('idUser').eql(ratingPOST.idUser);
+                rating.should.have.property('idRecipe').eql(ratingPOST.idRecipe);
+                rating.should.have.property('like').eql(ratingPOST.like);
+                rating.should.have.property('comment').eql(ratingPOST.comment);
+            });
+
         })
     })
 })
@@ -60,11 +59,10 @@ describe('get ratings by Id user', () => {
         chai.request(apiURL)
         .get('/api/v1/ratings/' + userId)
         .end((err, res) => {
-            res.body.should.be.a('object');
-            res.body.should.have.property('idUser').eql(ratingPOST.idUser);
-            res.body.should.have.property('idRecipe').eql(ratingPOST.idRecipe);
-            res.body.should.have.property('like').eql(ratingPOST.like);
-            res.body.should.have.property('comment').eql(ratingPOST.comment);
+            res.body.should.be.a('array');
+            res.body.forEach(r => {
+                r.should.be.equal('test_idRecipe');
+            });
         })
     })
 })
@@ -74,8 +72,7 @@ describe('put Rating', () => {
         chai.request(apiURL)
         .put('/api/v1/ratings/' + ratingId)
         .end((err, res) => {
-            res.should.have.status(201);
-            res.body.should.be.a('object');
+            res.should.have.status(204);
         })
     })
 })
@@ -83,7 +80,7 @@ describe('put Rating', () => {
 describe('delete Rating', () => {
     it('should delete rating', () => {
         chai.request(apiURL)
-        .delete('/api/v1/ratings/' + ratingId)
+        .delete('/api/v1/ratings/'+ratingId)
         .end((err, res) => {
             res.should.have.status(204);
         })

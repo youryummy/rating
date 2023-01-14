@@ -4,6 +4,9 @@ import { logger } from "@oas-tools/commons";
 import _ from "lodash";
 import * as perspective from "../services/perspective.js";
 import { CircuitBreaker } from "../circuitBreaker/circuitBreaker.js";
+import axios from "axios";
+
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
 
 export async function findByRecipeId(req, res) {
   const recipe = req.params.idRecipe;
@@ -12,6 +15,14 @@ export async function findByRecipeId(req, res) {
     .fire("find", { idRecipe: recipe })
     .then((result) => {
       if (result) {
+        result.forEach(function (r, index) {
+          axios.get(`${backendUrl}/api/v1/accounts/${r.idUser}`).then((response) => {
+            console.log("obtenido de account: ",response.data);
+            result[index].fullName = response.data.fullName;
+            result[index].avatar = response.data.avatar;
+          });
+        });
+        
         res.send(result);
       } else {
         res.sendStatus(404);

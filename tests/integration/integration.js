@@ -1,6 +1,6 @@
-//import chai from 'chai';
-//import chaiHttp from 'chai-http';
-//import sinon from 'sinon';
+/* import chai from 'chai';
+import chaiHttp from 'chai-http';
+import sinon from 'sinon';
 
 //import Rating from '../../mongo/rating';
 //import { strict as assert } from 'node:assert';
@@ -212,9 +212,10 @@
 //        assertRequest(404, {message: `Recipes Book with id '${res.locals.oas.params._id}' does not exist`}, done);
 //    });
 
-//    it("Should return 500 when database fails", (done) => {
-//        fixture("oldTest", { _id: "test" }, null, true, {message: "Circuit is open"});
-//        addRecipesBook(req, res);
-//        assertRequest(500, {message: 'Unexpected error ocurred, please try again later'}, done);
-//    });
-//});
+    it("Should return 500 when database fails", (done) => {
+        fixture("oldTest", { _id: "test" }, null, true, {message: "Circuit is open"});
+        addRecipesBook(req, res);
+        assertRequest(500, {message: 'Unexpected error ocurred, please try again later'}, done);
+    });
+});
+ */
