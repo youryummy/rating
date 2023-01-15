@@ -17,6 +17,7 @@ describe('get Ratings', () => {
         .get('/api/v1/ratings')
         .end((err, res) => {
             res.body.should.be.a('array');
+            done();
         })
     })
 })
@@ -33,6 +34,7 @@ describe('post Ratings', () => {
             res.body.should.have.property('like');
             res.body.should.have.property('comment');
             res.body.should.have.property('_id');
+            done();
         })
     })
 })
@@ -48,6 +50,9 @@ describe('get ratings by Id recipe', () => {
                 rating.should.have.property('idRecipe').eql(ratingPOST.idRecipe);
                 rating.should.have.property('like').eql(ratingPOST.like);
                 rating.should.have.property('comment').eql(ratingPOST.comment);
+
+                ratingId = rating._id;
+                done();
             });
 
         })
@@ -59,10 +64,11 @@ describe('get ratings by Id user', () => {
         chai.request(apiURL)
         .get('/api/v1/ratings/' + userId)
         .end((err, res) => {
-            res.body.should.be.a('array');
+            res.body.should.be.a('object');
             res.body.forEach(r => {
                 r.should.be.equal('test_idRecipe');
             });
+            done();
         })
     })
 })
@@ -73,6 +79,7 @@ describe('put Rating', () => {
         .put('/api/v1/ratings/' + ratingId)
         .end((err, res) => {
             res.should.have.status(204);
+            done();
         })
     })
 })
@@ -83,6 +90,7 @@ describe('delete Rating', () => {
         .delete('/api/v1/ratings/'+ratingId)
         .end((err, res) => {
             res.should.have.status(204);
+            done();
         })
     })
 })
