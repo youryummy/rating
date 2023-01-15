@@ -2,134 +2,160 @@ import Rating from "../mongo/rating.js";
 import { Types } from "mongoose";
 import { logger } from "@oas-tools/commons";
 import _ from "lodash";
-import * as perspective from '../services/perspective.js';
+import * as perspective from "../services/perspective.js";
+import { CircuitBreaker } from "../circuitBreaker/circuitBreaker.js";
+import axios from "axios";
 
+const backendUrl =
+  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://youryummy-account-service:80";
 
-export async function findByRecipeId(_req, res) {
-  const idRecipe = _req.params.idRecipe;
+export async function findByRecipeId(req, res) {
+  const recipe = req.params.idRecipe;
 
-  try {
-    var ratingsForRecipe = await Rating.find({ idRecipe: idRecipe });
+  CircuitBreaker.getBreaker(Rating)
+    .fire("find", { idRecipe: recipe })
+    .then((result) => {
+      if (result) {
+        var newResult = JSON.parse(JSON.stringify(result));
 
-    /*
-        ratingsForRecipe.forEach(function (r, index) {
-        //AQUI DEBERIA ESTAR LA FUNCION AWAIT QUE LLAMA A ACCOUNTS
-        accountInfo = accounts.find(a => {
-            return a.idUser === r.idUser;
-        })
-        
-        Object.assign(ratingsForRecipe[index], accountInfo);
-    
+        var p = newResult.map((r) => {
+          return axios
+            .get(`${backendUrl}/api/v1/accounts/${r.idUser}`, {
+              withCredentials: true,
+            })
+            .then((userData) => {
+              Object.assign(r, userData.data);
+              console.log("r: ", r);
+              console.log("userData.data: ", userData.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         });
-        */
 
-    res.send(ratingsForRecipe);
-  } catch (e) {
-    res.status(400).send({ error: e.message });
-  }
+        Promise.all(p).then(() => {
+          res.send(newResult);
+        });
+      } else {
+        res.sendStatus(404);
+      }
+    })
+    .catch((err) => {
+      res.sendStatus(500).send({ error: err.message });
+    });
 }
 
-//No consigo que funcione
 export async function findByUserId(req, res) {
-  const idUser = req.params.idUser;
+  const user = req.params.idUser;
 
-  try {
-    const ratings = await Rating.find({idUser: idUser, like: true });
-    var results = [];
+  CircuitBreaker.getBreaker(Rating)
+    .fire("find", { idUser: user })
+    .then((result) => {
+      if (result) {
+        var resultsIdsOnly = [];
 
-    ratings.forEach(function (r, index) {
-      results.push(r.idRecipe);
+        result.forEach(function (r, index) {
+          resultsIdsOnly.push(r.idRecipe);
+        });
+
+        res.send(resultsIdsOnly);
+      } else {
+        res.sendStatus(404);
+      }
+    })
+    .catch((err) => {
+      res.sendStatus(500).send({ error: err.message });
     });
-
-    res.send(results);
-  } catch (e) {
-    if (e.errors) {
-      res.status(400).send({ error: e.message });
-    } else {
-      res.sendStatus(501);
-    }
-  }
 }
 
 export async function updateRating(req, res) {
-  var { like, comment} = req.body;
+  const valueLike = req.body.like;
+  let valueComment = req.body.comment;
+  const idRating = req.params.idRating;
+  const idUser = req.body.idUser;
+  const idRecipe = req.body.idRecipe;
 
   try {
-    const validationResult = await perspective.validateRating(comment);
+    const validationResult = await perspective.validateRating(valueComment);
     if (validationResult > 0.5) {
-      comment = "This comment has been removed due to toxicity";
+      valueComment = "This comment has been removed due to toxicity";
     }
 
-    var existingRating = await Rating.findOne({
-      _id: req.params.idRating,
-    });
-
-    if (existingRating != null) {
-      existingRating.comment = comment;
-      existingRating.like = like;
-      await existingRating.save();
-    } else {
-      res.sendStatus(404);
-    }
-    return res.sendStatus(204);
-  } catch (e) {
-    res.status(400).send({ error: e.message });
+    CircuitBreaker.getBreaker(Rating)
+      .fire(
+        "findByIdAndUpdate",
+        { _id: idRating },
+        {
+          like: valueLike,
+          comment: valueComment,
+          idUser: idUser,
+          idRecipe: idRecipe,
+        }
+      )
+      .then((result) => {
+        if (result) {
+          res.sendStatus(204);
+        } else {
+          res.sendStatus(404);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({ errror: err.message });
+      });
+  } catch (err) {
+    res.status(400).send({ error: err.message });
   }
 }
 
 export async function deleteRating(req, res) {
-  const idRating = req.params.idRating;
+  const rating = req.params.idRating;
 
   try {
-    await Rating.deleteOne({ _id: idRating });
-    res.sendStatus(204);
-  } catch (e) {
-    res.status(400).send({ error: e.message });
+    CircuitBreaker.getBreaker(Rating).fire("findByIdAndDelete", {
+      _id: rating,
+    });
+    return res.sendStatus(204);
+  } catch (err) {
+    res.status(400).send({ error: err.message });
   }
 }
 
 export async function getAllRatings(req, res) {
-  try {
-    const ratings = await Rating.find({});
-    res.send(ratings);
-  } catch (e) {
-    res.status(400).send({ error: e.message });
-  }
+  CircuitBreaker.getBreaker(Rating)
+    .fire("find", {})
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      res.status(500).send({ error: err.message });
+    });
 }
 
 export async function addRating(req, res) {
-  var { like, comment, idRecipe, idUser } = req.body;
+  const newRating = req.body;
 
   try {
-    const validationResult = await perspective.validateRating(comment);
+    const validationResult = await perspective.validateRating(
+      newRating.comment
+    );
+
     if (validationResult > 0.5) {
-      comment = "This comment has been removed due to toxicity";
+      newRating.comment = "This comment has been removed due to toxicity";
     }
 
-    var existingRating = await Rating.findOne({
-      idUser: idUser,
-      idRecipe: idRecipe,
-    });
-    if (existingRating != null) {
-      existingRating.comment = comment;
-      existingRating.like = like;
-      await existingRating.save();
-    } else {
-      const rating = new Rating({
-        like,
-        comment,
-        idRecipe,
-        idUser,
+    CircuitBreaker.getBreaker(Rating)
+      .fire("create", newRating)
+      .then((newRating) => {
+        if (addRating) {
+          return res.send(newRating);
+        } else {
+          res.sendStatus(404);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({ error: err.message });
       });
-
-      await rating.save();
-    }
-    return res.sendStatus(201);
-  } catch (e) {
-    if (e.errors) {
-      res.status(400).send({ error: e.message });
-    } else {
-      res.sendStatus(501);
-    }
+  } catch (err) {
+    res.status(400).send({ error: err.message });
   }
 }
