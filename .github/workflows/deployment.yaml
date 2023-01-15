@@ -94,4 +94,3 @@ jobs:
               MONGO_USER=rservice,
               MONGO_DBNAME=ratings,
               COOKIE_DOMAIN=cloud.okteto.net,
-              FIREBASE_BUCKET=your-yummy.appspot.com,
