@@ -28,10 +28,6 @@ jobs:
         run: echo "${{ secrets.RATING_TOKEN }}" > .env.test
       - name: Run tests
         run: npm test
-      - name: Coverage to Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.RATING_TOKEN }}
         env:
           CI: true
 
