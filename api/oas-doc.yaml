@@ -57,6 +57,7 @@ paths:
       parameters:
         - required: true
           name: idRating
+          x-acl-binding: ratingIds
           description: idRating of the rating to update
           in: path
           schema:
@@ -106,6 +107,7 @@ paths:
       parameters:
         - required: true
           name: idRecipe
+          x-acl-binding: ratingIds
           description: idRecipe of the rating to fetch
           in: path
           schema:
@@ -133,6 +135,7 @@ paths:
       parameters:
         - required: true
           name: idUser
+          x-acl-binding: ratingIds
           description: idUser of the ratings to fetch
           in: path
           schema:
