@@ -1,16 +1,18 @@
 user:
-  api/v1/ratings/{idRating}:
+  api/v1/ratings/findByRecipeId/{idRecipe}:
     "read:any": ["*"]
-    "update:own": ["*"]
-    "delete:own": ["*"]
+  api/v1/ratings/{idRating}:
+    "update:any": ["*"]
+    "delete:any": ["*"]
   api/v1/ratings:
     "read:any": ["*"]
-    "create:own": ["*"]
+    "create:any": ["*"]
 admin:
   api/v1/ratings:
     "read:any": ["*"]
     "create:any": ["*"]
-  api/v1/ratings/{id}:
+  api/v1/ratings/findByRecipeId/{idRecipe}:
     "read:any": ["*"]
+  api/v1/ratings/{idRating}:
     "update:any": ["*"]
     "delete:any": ["*"]

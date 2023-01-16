@@ -7,6 +7,8 @@ info:
 paths:
   /api/v1/ratings:
     get:
+      security:
+          - apikey: []
       description: Returns all ratings
       x-router-controller: ratingManager
       operationId: getAllRatings
@@ -26,6 +28,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
     post:
+      security:
+        - apikey: []
       description: Creates a new rating
       x-router-controller: ratingManager
       operationId: addRating
@@ -51,6 +55,8 @@ paths:
                   $ref: '#/components/schemas/error'
   /api/v1/ratings/{idRating}:
     put:
+      security:
+        - apikey: []
       description: Update a rating based on its idRating
       x-router-controller: ratingManager
       operationId: updateRating
@@ -79,6 +85,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
     delete:
+      security:
+        - apikey: []
       description: Deletes a single rating based on its idRating
       x-router-controller: ratingManager
       operationId: deleteRating
@@ -101,6 +109,8 @@ paths:
                 $ref: '#/components/schemas/error'
   /api/v1/ratings/findByRecipeId/{idRecipe}:
     get:
+      security:
+        - apikey: []
       description: Returns a single rating by its idRecipe
       x-router-controller: ratingManager
       operationId: findByRecipeId
@@ -135,7 +145,6 @@ paths:
       parameters:
         - required: true
           name: idUser
-          x-acl-binding: ratingIds
           description: idUser of the ratings to fetch
           in: path
           schema:
