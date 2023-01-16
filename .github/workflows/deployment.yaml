@@ -25,7 +25,7 @@ jobs:
       - name: Run mongo docker
         run: docker run -d -p 27017:27017 --name mongo mongo:latest
       - name: Create env file
-        run: echo "${{ secrets.RATING_TOKEN }}" > .env.test
+        run: echo "${{ secrets.TEST_ENV }}" > .env.test
       - name: Run tests
         run: npm test
         env:
