@@ -49,7 +49,7 @@ else if (process.argv.includes("tests/components")) {
 
     console.log("mongoURL: ", mongoURL);
     mongoose.set('strictQuery', false);
-    await mongoose.connect(mongoURL).then(async () => {
+    await mongoose.connect("mongodb://localhost:27017/test").then(async () => {
 
         
         // populate test db
