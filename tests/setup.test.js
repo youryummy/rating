@@ -38,22 +38,16 @@ if (process.argv.includes("tests/integration")) {
 
 else if (process.argv.includes("tests/components")) {
     dotenv.config({ path: ".env.test" }); // load test env variables
-
-    const mongoPort = process.env.MONGO_PORT ?? 27017;
-const mongoHost = process.env.MONGO_HOST ?? 'localhost';
-const mongoDBName = process.env.MONGO_DBNAME ?? 'default-db';
-const mongoProto = process.env.MONGO_PROTO ?? 'mongodb';
-const mongoUser = process.env.MONGO_USER;
-const mongoPwd = process.env.MONGO_PWD;
     
+    const mongoHost = process.env.MONGO_HOST;
+    const mongoDBName = process.env.MONGO_DBNAME;
+    const mongoProto = process.env.MONGO_PROTO;
+    const mongoUser = process.env.MONGO_USER;
+    const mongoPwd = process.env.MONGO_PWD;
     
-const mongoURL = `${mongoProto}://` +
-`${mongoUser ? mongoUser + ":" : ""}` +
-`${mongoPwd ? mongoPwd + "@" : ""}` +
-`${mongoHost}${mongoProto == "mongodb+srv" ? "" : ":" + mongoPort}` +
-`/${mongoDBName}`;
-    console.log("mongoURL: ", mongoURL); 
+    const mongoURL = `${mongoProto}://${mongoUser}:${mongoPwd}@${mongoHost}/${mongoDBName}`;
 
+    console.log("mongoURL: ", mongoURL);
     mongoose.set('strictQuery', false);
     await mongoose.connect(mongoURL).then(async () => {
 
