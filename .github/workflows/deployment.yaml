@@ -42,7 +42,7 @@ jobs:
         - name: Okteto Deploy
           uses: okteto/pipeline@latest
           with:
-            name: ratings-service
+            name: rating
             namespace: youryummy-maribelrb22
             variables: >-
               NODE_ENV=production,
