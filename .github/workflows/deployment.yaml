@@ -22,8 +22,8 @@ jobs:
           node-version: 16.x
       - name: Install dependencies
         run: npm ci
-      - name: Run mongo docker
-        run: docker run -d -p 27017:27017 --name mongo mongo:latest
+      - name: Run docker compose
+        run: docker-compose -f "./.github/workflows/docker-compose.yaml" up -d --build
       - name: Create env file
         run: echo "${{ secrets.TEST_ENV }}" > .env.test
       - name: Run tests
