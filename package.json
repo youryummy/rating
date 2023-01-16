@@ -10,7 +10,7 @@
     "prestart": "npm install --only=prod",
     "start": "node index.js",
     "test:components": "mocha --exit --recursive --timeout 5000 -r tests/setup.test.js tests/components",
-    "test:integration": "mocha --exit --recursive --timeout 7000 tests/integration",
+    "test:integration": "mocha --exit --recursive --timeout 7000 -r tests/setup.test.js tests/integration",
     "test": "npm run test:components && npm run test:integration"
   },
   "dependencies": {
