@@ -51,8 +51,8 @@ export async function findByUserId(req, res) {
   CircuitBreaker.getBreaker(Rating)
     .fire("find", { idUser: user, like: true })
     .then((result) => {
+      let resultsIdsOnly = [];
       if (result) {
-        var resultsIdsOnly = [];
 
         result.forEach(function (r, index) {
           resultsIdsOnly.push(r.idRecipe);
@@ -60,7 +60,7 @@ export async function findByUserId(req, res) {
 
         res.send(resultsIdsOnly);
       } else {
-        res.sendStatus(404);
+        res.send(resultsIdsOnly);
       }
     })
     .catch((err) => {
