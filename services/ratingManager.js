@@ -49,7 +49,7 @@ export async function findByUserId(req, res) {
   const user = req.params.idUser;
 
   CircuitBreaker.getBreaker(Rating)
-    .fire("find", { idUser: user })
+    .fire("find", { idUser: user, like: true })
     .then((result) => {
       if (result) {
         var resultsIdsOnly = [];
