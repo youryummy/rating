@@ -7,7 +7,7 @@ import { CircuitBreaker } from "../circuitBreaker/circuitBreaker.js";
 import axios from "axios";
 
 const backendUrl =
-  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://youryummy-accounts-service:80";
+  process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://youryummy-account-service:80";
 
 export async function findByRecipeId(req, res) {
   const recipe = req.params.idRecipe;
