@@ -2,29 +2,17 @@ import http from "http";
 import express from "express";
 import { initialize, use } from "@oas-tools/core";
 import { OASSwagger } from "./middleware/oas-swagger.js";
+import { logger } from "@oas-tools/commons";
 
 const deploy = async (env) => {
     const serverPort = process.env.PORT ?? 8080;
     const app = express();
 
-
-
-
-
-
-    ////////////////////FALTA APP.USE///////////////////////////
-
-
-
-
-
-
-
     // Feature toggles
     let config = {}
     if (env === "production") {
         config.middleware = { 
-            validator: { requestValidation: true, responseValidation: true } // Done in gateway
+            validator: { requestValidation: false, responseValidation: false } // Done in gateway
         }
     }
 
